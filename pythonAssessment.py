@@ -26,7 +26,11 @@ def extract_words(text):
 def count_specific_word(text, search_word):
     """Return how many times `search_word` appears in `text` (case-insensitive)."""
     cleaned = search_word.strip().strip(".,!?;:\"").lower()
-    return extract_words(text).count(cleaned)
+    count = 0
+    for word in extract_words(text):
+        if word == cleaned:
+            count += 1
+    return count
 
 
 def identify_most_common_word(text):
@@ -42,7 +46,11 @@ def calculate_average_word_length(text):
     words = extract_words(text)
     if not words:
         return 0
-    total_letters = sum(len(NON_ALNUM_PATTERN.sub("", word)) for word in words)
+    total_letters = 0
+    index = 0
+    while index < len(words):
+        total_letters += len(NON_ALNUM_PATTERN.sub("", words[index]))
+        index += 1
     return total_letters / len(words)
 
 
@@ -58,8 +66,14 @@ def count_paragraphs(text):
 
 
 def count_sentences(text):
-    """Return the number of sentences, split on ., ! or ? followed by whitespace/end."""
-    return len([s for s in SENTENCE_SPLIT_PATTERN.split(text) if s.strip()])
+    """Return the number of sentences. An empty string counts as 1."""
+    if not text.strip():
+        return 1
+    count = 0
+    for sentence in SENTENCE_SPLIT_PATTERN.split(text):
+        if sentence.strip():
+            count += 1
+    return count
 
 
 def main():
